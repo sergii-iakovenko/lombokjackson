@@ -18,14 +18,14 @@ import lombok.Value;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class MultipleConstructorsEntity {
 
-    private String field;
+    String field;
 
-    private int severalWordsField;
+    int severalWordsField;
 
     /**
      * Second, non all args constructor.
      */
-    public MultipleConstructorsEntity(String field) {
+    MultipleConstructorsEntity(String field) {
         this.field = field;
         this.severalWordsField = 42;
     }

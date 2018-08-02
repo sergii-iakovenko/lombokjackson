@@ -12,7 +12,12 @@ import lombok.Value;
 /**
  * Example of a json serializable entity through builder.
  *
- * Avoids usage of {@link JsonCreator} and {@link JsonProperty} in constructor.
+ * The {@link DefaultEntity} becomes immutable.
+ * It's a {@link Value}, so fields are efficiently final private. The default Jackson serialization model not longer
+ * works.
+ *
+ * Alternative to {@link BaselineEntity}.
+ * Avoids usage of {@link JsonCreator} constructor with {@link JsonProperty} annotated arguments.
  */
 @Value
 @Builder(builderClassName = "JsonBuilder")                  // points on explicit defined empty class
@@ -20,9 +25,9 @@ import lombok.Value;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Entity {
 
-    private String field;
+    String field;
 
-    private int severalWordsField;
+    int severalWordsField;
 
     /**
      * This static class must be explicitly defined while lombok {@link Builder} can't apply annotations to generated

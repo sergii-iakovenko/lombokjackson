@@ -1,5 +1,6 @@
 package example;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -9,28 +10,38 @@ import lombok.Builder;
 import lombok.Value;
 
 /**
- * The {@link Entity} version with custom field serializing name.
+ * Complex {@link Entity}, with all serializing features.
  */
 @Value
-@JsonDeserialize(builder = CustomizedEntity.JsonBuilder.class)
+@JsonDeserialize(builder = ComplexEntity.JsonBuilder.class)
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class CustomizedEntity {
+public class ComplexEntity {
 
-    @JsonProperty("super_customizable_property")    // uses for serializing
+    @JsonProperty("super_customizable_property")
     String field;
+
+    @JsonIgnore
+    String secondField;
 
     int severalWordsField;
 
     /**
+     * Some constructor for tests.
+     */
+    ComplexEntity(String field, int severalWordsField) {
+        this(field, null, severalWordsField);
+    }
+
+    /**
      * Explicit all args constructor.
-     *
-     * The {@link Builder} is hire now, and uses declared constructors argument names to generate builder methods names.
      */
     @Builder(builderClassName = "JsonBuilder")
-    public CustomizedEntity(
-            String superCustomizableProperty,   // generates builder method name that uses for deserializing
+    public ComplexEntity(
+            String superCustomizableProperty,
+            String secondField,
             int severalWordsField) {
         this.field = superCustomizableProperty;
+        this.secondField = secondField;
         this.severalWordsField = severalWordsField;
     }
 
