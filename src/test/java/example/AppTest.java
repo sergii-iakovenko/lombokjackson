@@ -1,7 +1,6 @@
 package example;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,21 +50,23 @@ public class AppTest {
     }
 
     @Test
-    public void complexEntityPositiveTest() throws IOException {
+    public void complexEntityWithoutIgnoredTest() throws IOException {
         ComplexEntity entity = new ComplexEntity( "hello", 42);
         assertEquals(entity, pass(entity, ComplexEntity.class));
     }
 
     @Test
-    public void complexEntityNegativeTest() throws IOException {
+    public void complexEntityFullTest() throws IOException {
         ComplexEntity entity = ComplexEntity.builder()
-                .superCustomizableProperty("hello")
-                .secondField("world")
+                .a(42)
+                .b("hello")
+                .someField(12L)
+                .superCustomizableProperty("world")
                 .severalWordsField(42)
                 .build();
         ComplexEntity passedEntity = pass(entity, ComplexEntity.class);
 
-        assertNotEquals(entity, passedEntity);
-        assertNull(passedEntity.getSecondField());
+        assertEquals(entity, passedEntity);
+        assertNull(passedEntity.getB());
     }
 }
