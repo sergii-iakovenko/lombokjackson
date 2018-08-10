@@ -1,26 +1,30 @@
 package example;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Value;
 
-@Data
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, property="clazz")
-class A {
-    final int a;
+@Getter
+@EqualsAndHashCode
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "clazz")
+abstract class A {
+    int a;
+
+    A(int a) {
+        this.a = a;
+    }
 }
 
-@Data
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Getter
 @EqualsAndHashCode(callSuper = true, exclude = "b")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 class B extends A {
 
     @JsonIgnore
@@ -33,14 +37,18 @@ class B extends A {
         this.b = b;
         this.someField = someField;
     }
+
+    @JsonCreator
+    public B(int a, long someField) {
+        this(a, null, someField);
+    }
 }
 
 /**
- * Complex {@link Entity}, with all serializing features.
+ * Complex immutable entity, with all serializing features.
  */
 @Value
 @EqualsAndHashCode(callSuper = true)
-@JsonDeserialize(builder = ComplexEntity.JsonBuilder.class)
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class ComplexEntity extends B {
 
@@ -57,17 +65,20 @@ public class ComplexEntity extends B {
     }
 
     /**
-     * All args constructor.
+     * Constructor used for deserialization.
      */
-    @Builder(builderClassName = "JsonBuilder")
-    public ComplexEntity(int a, String b, long someField, String superCustomizableProperty, int severalWordsField) {
-        super(a, b, someField);
-        this.field = superCustomizableProperty;
-        this.severalWordsField = severalWordsField;
+    @JsonCreator
+    public ComplexEntity(int a, long someField, String field, int severalWordsField) {
+        this(a, null, someField, field, severalWordsField);
     }
 
-    @JsonPOJOBuilder(withPrefix = "")
-    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-    public static class JsonBuilder {
+    /**
+     * All args constructor.
+     */
+    @Builder
+    public ComplexEntity(int a, String b, long someField, String field, int severalWordsField) {
+        super(a, b, someField);
+        this.field = field;
+        this.severalWordsField = severalWordsField;
     }
 }
